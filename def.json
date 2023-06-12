@@ -1,0 +1,190 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:eu-west-3:444924373649:task-definition/mv-webapp-task-df:391",
+    "containerDefinitions": [
+        {
+            "name": "nginx",
+            "image": "038858991290.dkr.ecr.eu-west-3.amazonaws.com/mv-nginx:1.1.0",
+            "cpu": 225,
+            "memory": 500,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [
+                {
+                    "sourceVolume": "www-root",
+                    "containerPath": "/var/www/myvioo/",
+                    "readOnly": false
+                }
+            ],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "mv-ecs",
+                    "awslogs-region": "eu-west-3",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        },
+        {
+            "name": "php74-service",
+            "image": "038858991290.dkr.ecr.eu-west-3.amazonaws.com/mv-web-app:dd520f6",
+            "cpu": 1024,
+            "memory": 2048,
+            "portMappings": [
+                {
+                    "containerPort": 9000,
+                    "hostPort": 9000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "AWS_OUTPUT_BUCKET",
+                    "value": "mv-output-stream-dev"
+                },
+                {
+                    "name": "WEB_SOCKET_PORT",
+                    "value": "443"
+                },
+                {
+                    "name": "APP_ENV",
+                    "value": "dev"
+                },
+                {
+                    "name": "AWS_OTHER_FILES_BUCKET",
+                    "value": "mv-assets-dev"
+                },
+                {
+                    "name": "AWS_INPUT_BUCKET",
+                    "value": "mv-input-upload-dev"
+                },
+                {
+                    "name": "AWS_SECRETS_MANAGER_ID",
+                    "value": "mv_cf_video_cookie_key"
+                },
+                {
+                    "name": "AWS_LOG_GROUP_NAME",
+                    "value": "MyVideoGroup"
+                },
+                {
+                    "name": "AWS_KEY_PAIR_ID_CLOUDFRONT",
+                    "value": "K7QRGWLH6M60X"
+                },
+                {
+                    "name": "AWS_ASSETS_CF_KEY_ID",
+                    "value": "K7QRGWLH6M60X"
+                },
+                {
+                    "name": "AWS_STREAM_FILE",
+                    "value": "https://assets.dev.myvioo.io/"
+                },
+                {
+                    "name": "AWS_STREAM_VIDEO",
+                    "value": "https://stream.dev.myvioo.io/"
+                },
+                {
+                    "name": "AWS_MEDIA_CONVERT_ENDPOINT",
+                    "value": "https://rtzfszwjb.mediaconvert.eu-west-3.amazonaws.com"
+                },
+                {
+                    "name": "WEB_SOCKET_URL",
+                    "value": "wss://dev.myvioo.io"
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "www-root",
+                    "containerPath": "/var/www/myvioo/",
+                    "readOnly": false
+                }
+            ],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "DATABASE_URL",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-3:444924373649:secret:mv_mysql_conn_string-jQAsUk"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-3:444924373649:secret:aws_creds_key-THaxAH"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-3:444924373649:secret:aws_creds_secret-OXTWPu"
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "mv-ecs",
+                    "awslogs-region": "eu-west-3",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "mv-webapp-task-df",
+    "taskRoleArn": "arn:aws:iam::444924373649:role/mv-ecs-task",
+    "executionRoleArn": "arn:aws:iam::444924373649:role/mv-ecs-service",
+    "networkMode": "awsvpc",
+    "revision": 391,
+    "volumes": [
+        {
+            "name": "www-root",
+            "dockerVolumeConfiguration": {
+                "scope": "task",
+                "driver": "local"
+            }
+        }
+    ],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "ecs.capability.docker-plugin.local"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.25"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2"
+    ],
+    "registeredBy": "arn:aws:sts::444924373649:assumed-role/mv-cicd-remote-role/dev-account",
+    "tags": []
+}
